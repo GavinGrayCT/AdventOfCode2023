@@ -1,0 +1,15 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/day1trebuchet
+day1trebuchet.so
+day1trebuchet.dylib
+day1trebuchet.dll
+day1trebuchet.a
+day1trebuchet.lib
+day1trebuchet-test-*
+*.exe
+*.o
+*.obj
+*.lst

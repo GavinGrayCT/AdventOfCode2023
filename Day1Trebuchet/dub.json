@@ -1,0 +1,9 @@
+{
+	"authors": [
+		"gavin"
+	],
+	"copyright": "Copyright © 2023, gavin",
+	"description": "First day of Advent of Code",
+	"license": "proprietary",
+	"name": "day1trebuchet"
+}
