@@ -1,17 +1,25 @@
 import std.range, std.stdio;
 import std.ascii;
 import std.conv;
+import core.time;
 
 // Simple, easy to understand;
 // Tolerant of invalid input
-void main()
-{
+void main() {
   auto file = File("data/thedata.txt"); // Open for reading
+
+  auto startTime = MonoTime.currTime;
+
   auto range = file.byLine();
   ulong theSum = 0;
   foreach (line; range) {
     theSum += getLinesNumber(line);
   }
+
+  auto endTime = MonoTime.currTime;
+  auto duration = endTime - startTime;
+  writefln("Hello Duration ==> %s usecs", duration.total!"usecs");
+
   writefln("The sum of the embedded numbers is %s", theSum);
 }
 
@@ -20,7 +28,7 @@ ulong getLinesNumber(const char[] line) {
   char a = 0 , b = 0;
   bool gotADigit = false;
   foreach(c; line) {
-    if ( (a == 0) && (c.isDigit) ) { // Get first digit
+    if ( (!gotADigit) && (c.isDigit) ) { // Get first digit
       a = c;
       gotADigit = true;
     }
