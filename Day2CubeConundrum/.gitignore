@@ -1,0 +1,15 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/day2cubeconundrum
+day2cubeconundrum.so
+day2cubeconundrum.dylib
+day2cubeconundrum.dll
+day2cubeconundrum.a
+day2cubeconundrum.lib
+day2cubeconundrum-test-*
+*.exe
+*.o
+*.obj
+*.lst

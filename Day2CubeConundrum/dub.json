@@ -1,0 +1,9 @@
+{
+	"authors": [
+		"gavin"
+	],
+	"copyright": "Copyright © 2023, gavin",
+	"description": "Calculate solution to red, green and blue cubes game",
+	"license": "proprietary",
+	"name": "day2cubeconundrum"
+}
