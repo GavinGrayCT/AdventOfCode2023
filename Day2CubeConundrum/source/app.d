@@ -85,6 +85,7 @@ ulong processGame(string gameLine, Handfull bag) {
        (bag.green >= aGame.maxGreen) &&
        (bag.blue >= aGame.maxBlue) ) {
         result = gameId;
+    // writefln("gameId: %s", gameId);
   } else {
     result = 0;
   }
