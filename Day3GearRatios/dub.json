@@ -1,0 +1,9 @@
+{
+	"authors": [
+		"gavin"
+	],
+	"copyright": "Copyright © 2023, gavin",
+	"description": "Calculate sum of parts",
+	"license": "proprietary",
+	"name": "day3gearratios"
+}

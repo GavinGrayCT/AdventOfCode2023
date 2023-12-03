@@ -1,0 +1,15 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/day3gearratios
+day3gearratios.so
+day3gearratios.dylib
+day3gearratios.dll
+day3gearratios.a
+day3gearratios.lib
+day3gearratios-test-*
+*.exe
+*.o
+*.obj
+*.lst
