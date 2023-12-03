@@ -19,33 +19,33 @@ struct Game {
   ulong maxBlue;
 }
 
-enum States {
-  gettingNumber,
-  gettingColor
+struct GameResult {
+  ulong sumPossibleIds;
+  ulong sumPowerSetOfMinimums;
 }
 
 
 void main()
 {
   Handfull bag = Handfull(12, 13, 14);
-  auto file = File("data/thedata.txt"); // Open for reading
 
   auto startTime = MonoTime.currTime;
-  ulong sumPosibleGameIds = 0;
+  auto file = File("data/thedata.txt"); // Open for reading
+  GameResult gameResult;
   auto range = file.byLine();
   foreach (line; range) {
-    sumPosibleGameIds += processGame(cast(string)line, bag);
+    processGame(cast(string)line, bag, gameResult);
   }
 
   auto endTime = MonoTime.currTime;
   auto duration = endTime - startTime;
-  writefln("Hello Duration ==> %s usecs", duration.total!"usecs");
-  writefln("The sum of IDs of possible games is %s", sumPosibleGameIds);
+  writefln("Cube Conundrum Duration ==> %s usecs", duration.total!"usecs");
+  writefln("The sum of IDs of possible games is %s", gameResult.sumPossibleIds);
+  writefln("The sum of minimum power set of games is %s", gameResult.sumPowerSetOfMinimums);
 }
 
-ulong processGame(string gameLine, Handfull bag) {
+void processGame(string gameLine, Handfull bag, ref GameResult gameResult) {
   // writefln("gameLine: %s", gameLine);
-  ulong result;
   string[] game = gameLine.split(":");
   string[] gameDetails = game[0].split!isWhite;
   ulong gameId = gameDetails[1].to!ulong;
@@ -78,17 +78,19 @@ ulong processGame(string gameLine, Handfull bag) {
     aGame.maxGreen = max(aGame.maxGreen, handfull.green);
     aGame.maxBlue = max(aGame.maxBlue, handfull.blue);
   }
+  ulong powerSet = aGame.maxRed * aGame.maxGreen * aGame.maxBlue;
+  // writefln("gameId: %s", gameId);
   // writefln("bag.red: %s, aGame.maxRed: %s", bag.red, aGame.maxRed);
   // writefln("bag.green: %s, aGame.maxGreen: %s", bag.green, aGame.maxGreen);
   // writefln("bag.blue: %s, aGame.maxblue: %s", bag.blue, aGame.maxBlue);
+  // writefln("Power set is: %s", powerSet);
+  gameResult.sumPowerSetOfMinimums += powerSet;
   if ( (bag.red >= aGame.maxRed) &&
        (bag.green >= aGame.maxGreen) &&
        (bag.blue >= aGame.maxBlue) ) {
-        result = gameId;
-    // writefln("gameId: %s", gameId);
-  } else {
-    result = 0;
+        gameResult.sumPossibleIds += gameId;
+    // writefln("Possible gameId: %s", gameId);
   }
   // writefln("result: %s", result);
-  return result;
+  return;
 }
