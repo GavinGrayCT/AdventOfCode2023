@@ -11,6 +11,8 @@ struct Card {
   ulong cardNo;
   ulong[] winningNumbers;
   ulong[] scratchedNumbers;
+  ulong winners;
+  ulong copies = 1;
 }
 
 void main() {
@@ -18,18 +20,23 @@ void main() {
   auto startTime = MonoTime.currTime;
   auto file = File("data/thedata.txt"); // Open for reading
   ulong answerPart1 = 0;
+  ulong answerPart2 = 0;
   auto range = file.byLine();
   foreach (line; range) {
     cards ~= fillCard(line);
   }
 
-  // Debug
-  foreach(card; cards) {
-    writeln(format!"Card: %s, winning numbers:%s, scratched numbers:%s"(card.cardNo, card.winningNumbers, card.scratchedNumbers));
+  foreach(ref card; cards) {
+    card.winners = calcWinnersCard(card);
+    answerPart1 += 2 ^^ (card.winners - 1);
   }
 
+  answerPart2 = calcTotalCards(cards);
+
+  // Debug
   foreach(card; cards) {
-    answerPart1 += calcWinningsCard(card);
+    writeln(format!"Card: %s, winning numbers:%s, scratched numbers:%s, winners: %s, copies: %s"
+                   (card.cardNo, card.winningNumbers, card.scratchedNumbers, card.winners, card.copies));
   }
 
   // calcAnswerPart1(parts, symbols, answerPart1);
@@ -37,6 +44,7 @@ void main() {
   auto duration = endTime - startTime;
   writefln("Gear Ratios Duration ==> %s usecs", duration.total!"usecs");
   writefln("Sum of all of the winnings: %s", answerPart1);
+  writeln(format!"Total scratchcards: %s"(answerPart2));
 }
 
 Card fillCard(const char[] line) {
@@ -50,15 +58,28 @@ Card fillCard(const char[] line) {
   return card;
 }
 
-ulong calcWinningsCard(const Card card) {
-  ulong winnings = 0;
+ulong calcWinnersCard(const Card card) {
+  ulong winners = 0;
   foreach(winNr; card.winningNumbers) {
     foreach (ulong scratchedNumber; card.scratchedNumbers) {
       if (scratchedNumber == winNr) {
-        winnings = winnings == 0? 1: winnings *2;
+        winners += 1;
         // writeln(format!"Card: %s, Matched: %s, Winnings: %s"(card.cardNo, scratchedNumber, winnings));
       }
     }
   }
-  return winnings;
+  return winners;
 }
+
+  ulong calcTotalCards(Card[] cards) {
+    ulong totalCards = 0;
+    foreach(card; cards) {
+      totalCards += card.copies;
+      for (int i = 0; i < card.winners; i++) {
+        cards[card.cardNo +i].copies += card.copies;
+      }
+    }
+    return totalCards;
+  }
+
+
