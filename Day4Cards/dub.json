@@ -1,0 +1,9 @@
+{
+	"authors": [
+		"gavin"
+	],
+	"copyright": "Copyright © 2023, gavin",
+	"description": "AOC Winning Numbers Cards",
+	"license": "proprietary",
+	"name": "day4cards"
+}

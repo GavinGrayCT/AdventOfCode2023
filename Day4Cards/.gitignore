@@ -1,0 +1,15 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/day4cards
+day4cards.so
+day4cards.dylib
+day4cards.dll
+day4cards.a
+day4cards.lib
+day4cards-test-*
+*.exe
+*.o
+*.obj
+*.lst
