@@ -2,6 +2,7 @@ import std.stdio;
 import std.ascii;
 import core.time;
 import std.conv;
+import std.format;
 
 struct Item {
   ulong partNo;
@@ -16,7 +17,8 @@ void main() {
 
   auto startTime = MonoTime.currTime;
   auto file = File("data/thedata.txt"); // Open for reading
-  ulong answer;
+  ulong answerPart1;
+  ulong answerPart2;
   auto range = file.byLine();
   foreach (line; range) {
     Item[] partsInRow;
@@ -38,12 +40,14 @@ void main() {
     }
   }
 
-  calcAnswer(parts, symbols, answer);
-
+  calcAnswerPart1(parts, symbols, answerPart1);
+  writefln("\nPart 2");
+  calcAnswerPart2(parts, symbols, answerPart2);
   auto endTime = MonoTime.currTime;
   auto duration = endTime - startTime;
   writefln("Gear Ratios Duration ==> %s usecs", duration.total!"usecs");
-  writefln("Sum of all of the part numbers in the engine schematic: %s", answer);
+  writefln("Sum of all of the part numbers in the engine schematic: %s", answerPart1);
+  writefln("Sum of all of the gears numbers in the engine schematic: %s", answerPart2);
 }
 
 void fillItemsData(char[] line, ref Item[] partsInRow, ref Item[] symbolsInRow) {
@@ -105,7 +109,7 @@ void fillItemsData(char[] line, ref Item[] partsInRow, ref Item[] symbolsInRow) 
   }
 }
 
-void calcAnswer(const Item[][] parts, const Item[][] symbols, ref ulong answer) {
+void calcAnswerPart1(const Item[][] parts, const Item[][] symbols, ref ulong answer) {
   bool added = false;
   foreach(row, partsRow; parts) {
     foreach(part; partsRow) {
@@ -133,4 +137,35 @@ bool calcForPart(const Item part, const Item[] symbols, ref ulong answer) {
     }
   }
   return added;
+}
+
+void calcAnswerPart2(const Item[][] parts, const Item[][] symbols, ref ulong answer) {
+  foreach(row, symbolRow; symbols) {
+    foreach(symbol; symbolRow) {
+      if (symbol.symbol == '*') {
+        writeln(format!"row: %s, symbol: %s, c1: %s, c2: %s"(row, symbol.symbol, symbol.c1, symbol.c2));
+        Item[] symbolGears;
+        if (row >= 1) {
+          calcGearsForSymbol(parts[row-1], symbol, symbolGears);
+        }
+        calcGearsForSymbol(parts[row], symbol, symbolGears);
+        if (row < parts.length -1) {
+          calcGearsForSymbol(parts[row+1], symbol, symbolGears);
+        }
+        if (symbolGears.length == 2) {
+          writefln("First is: %s, Second is:%s", symbolGears[0].partNo, symbolGears[1].partNo);
+          answer += symbolGears[0].partNo * symbolGears[1].partNo;
+        }
+      }
+    }
+  }
+}
+
+void calcGearsForSymbol(const Item[] partsRow, Item symbol, ref Item[] symbolGears) {
+  foreach (part; partsRow) {
+    writeln(format!"part: %s, c1: %s, c2: %s"(part.partNo, part.c1, part.c2));
+    if ( (part.c1 <= symbol.c2) && (part.c2 >= symbol.c1) ) {
+      symbolGears ~= part;
+    }
+  }
 }
