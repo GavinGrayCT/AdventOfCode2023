@@ -1,0 +1,15 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/day5seeds
+day5seeds.so
+day5seeds.dylib
+day5seeds.dll
+day5seeds.a
+day5seeds.lib
+day5seeds-test-*
+*.exe
+*.o
+*.obj
+*.lst
