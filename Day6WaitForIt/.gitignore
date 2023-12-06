@@ -1,0 +1,15 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/day6waitforit
+day6waitforit.so
+day6waitforit.dylib
+day6waitforit.dll
+day6waitforit.a
+day6waitforit.lib
+day6waitforit-test-*
+*.exe
+*.o
+*.obj
+*.lst

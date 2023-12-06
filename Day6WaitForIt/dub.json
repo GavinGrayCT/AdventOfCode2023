@@ -1,0 +1,9 @@
+{
+	"authors": [
+		"gavin"
+	],
+	"copyright": "Copyright © 2023, gavin",
+	"description": "Determine ways to win a boat race",
+	"license": "proprietary",
+	"name": "day6waitforit"
+}
