@@ -48,13 +48,13 @@ void main()
       } else if (card == 'T') {
         cardsNr ~= 10;
       } else if (card == 'J') {
-        cardsNr ~= 11;
+        cardsNr ~= 1;
       } else if (card == 'Q') {
-        cardsNr ~= 12;
+        cardsNr ~= 11;
       } else if (card == 'K') {
-        cardsNr ~= 13;
+        cardsNr ~= 12;
       } else if (card == 'A') {
-        cardsNr ~= 14;
+        cardsNr ~= 13;
       } else {
         throw new Exception(format!"Non-existant card: |%s|"(card));
       }
@@ -109,11 +109,16 @@ void extractData(string word) {
 ulong getHandType(char[] cards) {
   ulong[char] cardToCountMap;
   ulong type = 0;
+  ulong jokerCount = 0;
   foreach(card; cards) {
-    if (card in cardToCountMap) {
-      cardToCountMap[card] += 1;
+    if (card == 'J') {
+      jokerCount += 1;
     } else {
-      cardToCountMap[card] = 1;
+      if (card in cardToCountMap) {
+        cardToCountMap[card] += 1;
+      } else {
+        cardToCountMap[card] = 1;
+      }
     }
   }
   foreach(key; cardToCountMap.keys) {
@@ -125,6 +130,63 @@ ulong getHandType(char[] cards) {
       type = 5;
     } else if (cardToCountMap[key] == 5) {
       type = 6;
+    }
+  }
+  // Add in jokers to type
+  // type 0 => + jokerCount; type 1 => 2 + jokerCount; type 2 => 2+jokerCount;
+  // type 3 => 3 + jokerCount;
+  // type 4 cannot have jokers; type 5 => 5 + jokerCount;
+  if (type == 0) {
+    if (jokerCount == 1) {
+      type = 1;
+    } else if (jokerCount == 2) {
+      type = 3;
+    } else if (jokerCount == 3) {
+      type = 5;
+    } else if (jokerCount == 4) {
+      type = 6;
+    } else if (jokerCount == 5) {
+      type = 6;
+    } else if (jokerCount > 5) {
+        throw new Exception(format!"Too many jokers: %s"(jokerCount));
+    }
+  } else if (type == 1) {
+    if (jokerCount == 1) {
+      type = 3;
+    } else if (jokerCount == 2) {
+      type = 5;
+    } else if (jokerCount == 3) {
+      type = 6;
+    } else if (jokerCount > 3) {
+        throw new Exception(format!"Too many jokers: %s"(jokerCount));
+    }
+  } else if (type == 2) {
+    if (jokerCount == 1) {
+      type = 4;
+    } else if (jokerCount > 1) {
+        throw new Exception(format!"Too many jokers: %s"(jokerCount));
+    }
+  } else if (type == 3) {
+    if (jokerCount == 1) {
+      type = 5;
+    } else if (jokerCount == 2) {
+      type = 6;
+    } else if (jokerCount > 2) {
+        throw new Exception(format!"Too many jokers: %s"(jokerCount));
+    }
+  } else if (type == 4) {
+    if (jokerCount > 0) {
+        throw new Exception(format!"Too many jokers: %s"(jokerCount));
+    }
+  } else if (type == 5) {
+    if (jokerCount == 1) {
+      type = 6;
+    } else if (jokerCount > 1) {
+      throw new Exception(format!"Too many jokers: %s"(jokerCount));
+    }
+  } else if (type == 6) {
+    if (jokerCount > 0) {
+        throw new Exception(format!"Too many jokers: %s"(jokerCount));
     }
   }
   return type;
