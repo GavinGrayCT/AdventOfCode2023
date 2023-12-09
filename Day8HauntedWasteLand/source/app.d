@@ -80,6 +80,8 @@ void main()
     }
   }
   writeln(format!"Intervals %s"(intervals));
+  intervals.sort;
+  writeln(format!"Intervals %s"(intervals));
   ulong gcdIntervals = gcdOfArray(intervals);
   writeln("The GCD of the array is: ", gcdIntervals);
   ulong[] remainders;
@@ -89,7 +91,7 @@ void main()
 
   BigInt productIntervals = 1;
   foreach(i, a; intervals) {
-    if (i == 0) {
+    if (i != intervals.length -1) {
       a = a / gcdIntervals;
     }
     productIntervals *= a;
