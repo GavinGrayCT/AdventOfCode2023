@@ -1,0 +1,15 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/day9miragemaintenance
+day9miragemaintenance.so
+day9miragemaintenance.dylib
+day9miragemaintenance.dll
+day9miragemaintenance.a
+day9miragemaintenance.lib
+day9miragemaintenance-test-*
+*.exe
+*.o
+*.obj
+*.lst
