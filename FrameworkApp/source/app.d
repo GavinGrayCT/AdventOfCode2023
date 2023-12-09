@@ -28,6 +28,8 @@ void main()
   writefln("Calc duration ==> %s usecs", duration.total!"usecs");
   writeln(format!"%s %s"(answerTextPart1, answerPart1));
   writeln(format!"%s %s"(answerTextPart2, answerPart2));
+  throw new Exception(format!"Exception example");
+
 }
 
 void extractData(string word) {
