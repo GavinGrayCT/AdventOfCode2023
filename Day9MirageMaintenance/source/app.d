@@ -8,26 +8,38 @@ import std.ascii;
 import std.string;
 import std.array;
 
-ulong[][] lines;
+long[][] lines;
 
 void main()
 {
-  string answerTextPart1 = "Day x, Part 1:";
-  string answerTextPart2 = "Day x, Part 2:";
-  ulong answerPart1 = 0;
-  ulong answerPart2 = 0;
+  string answerTextPart1 = "Day 9, Part 1:";
+  string answerTextPart2 = "Day 9, Part 2:";
+  long answerPart1 = 0;
+  long answerPart2 = 0;
   auto startTime = MonoTime.currTime;
-  auto pathFilename = "data/smalldata.txt";
+  auto pathFilename = "data/thedata.txt";
   string data = cast(string)read(pathFilename);
 
+  int i = 0;
   foreach (line; lineSplitter(data)) {
-    extractData(line);
+    extractData(i++, line);
   }
 
-  getHistories(lines);
+  long[][][] allLinesDiffs = getHistories(lines);
+  foreach(lineDiffs; allLinesDiffs) {
+    long aSum = 0;
+    for(long j = lineDiffs.length -1; j >= 0; j--) {
+      long[]lineDiff = lineDiffs[j];
+      writeln(format!"Getting answer part1, lineDiff: %s, long: %s, asum: %s, next: %s"(lineDiff, lineDiff[$-1], aSum, lineDiff[$-1] + aSum));
+      answerPart1 += lineDiff[$-1];
+      aSum += lineDiff[$-1];
+    }
+    writeln(format!"aSum: %s"(aSum));
+  }
 
   // Debug
-  writeln(format!"Data is: %s"(lines));
+  //writeln(format!"Data is: %s"(lines));
+  //writeln(format!"allLinesDiffs is: %s"(allLinesDiffs));
 
   auto endTime = MonoTime.currTime;
   auto duration = endTime - startTime;
@@ -36,19 +48,35 @@ void main()
   writeln(format!"%s %s"(answerTextPart2, answerPart2));
 }
 
-void extractData(string line) {
-  writeln(format!"Line is: %s"(line));
-  lines ~= splitter(line).array.map!(a => to!ulong(a)).array;
+void extractData(int i, string line) {
+  writeln(format!"%s Line is: %s"(i, line));
+  lines ~= splitter(line).array.map!(a => to!long(a)).array;
 }
 
-void getHistories(ulong[][] lines){
-  ulong[][] diffs;
-  ulong historiesSum = 0;
+long [][][] getHistories(long[][] lines){
+  long[][][] allLinesDiffs;
   foreach(line; lines) {
-    getHistory(line);
+    allLinesDiffs ~= getHistory(line);
   }
+  return allLinesDiffs;
 }
 
-void getHistory(ulong[] line) {
-  writeln(format!"A line: %s"(line));
+long[][] getHistory(long[] line) {
+  // writeln(format!"getHistory - line: %s"(line));
+  long[][] lineDiffs;
+  lineDiffs ~= line;
+  long sumDiffs = 1;
+  while (sumDiffs != 0) {
+    // writeln(format!"while - line: %s, line.length: %s"(line, line.length));
+    sumDiffs = 0;
+    long[] aDiff = [];
+    for (int i = 0; i < (line.length -1); i++) {
+      sumDiffs += line[i +1] - line[i];
+      aDiff ~= line[i +1] - line[i];
+    }
+    lineDiffs ~= aDiff;
+    line = aDiff;
+    // writeln(format!"while end - line: %s, aDiff: %s"(line, aDiff));
+  }
+  return lineDiffs;
 }
