@@ -27,14 +27,15 @@ void main()
 
   long[][][] allLinesDiffs = getHistories(lines);
   foreach(lineDiffs; allLinesDiffs) {
-    long aSum = 0;
-    for(long j = lineDiffs.length -1; j >= 0; j--) {
-      long[]lineDiff = lineDiffs[j];
-      writeln(format!"Getting answer part1, lineDiff: %s, long: %s, asum: %s, next: %s"(lineDiff, lineDiff[$-1], aSum, lineDiff[$-1] + aSum));
-      answerPart1 += lineDiff[$-1];
-      aSum += lineDiff[$-1];
+    writeln(format!"Getting answer part1, lineDiff: %s"(lineDiffs));
+    long next = 0;
+    for(long j = lineDiffs.length -2; j >=0; j--) {
+      long[] lineDiff = lineDiffs[j];
+      next = lineDiff[0] - next;
+      writeln(format!"j: %s, lineDiff: %s, long: %s, next: %s"(j, lineDiff, lineDiff[0], next));
     }
-    writeln(format!"aSum: %s"(aSum));
+    writeln(format!"aSum: %s"(next));
+    answerPart2 += next;
   }
 
   // Debug
@@ -65,18 +66,20 @@ long[][] getHistory(long[] line) {
   // writeln(format!"getHistory - line: %s"(line));
   long[][] lineDiffs;
   lineDiffs ~= line;
-  long sumDiffs = 1;
-  while (sumDiffs != 0) {
+  while (true) {
     // writeln(format!"while - line: %s, line.length: %s"(line, line.length));
-    sumDiffs = 0;
+    bool allZeroes = true;
     long[] aDiff = [];
     for (int i = 0; i < (line.length -1); i++) {
-      sumDiffs += line[i +1] - line[i];
       aDiff ~= line[i +1] - line[i];
+      if ( (line[i +1] - line[i]) != 0) {
+        allZeroes = false;
+      }
     }
     lineDiffs ~= aDiff;
     line = aDiff;
     // writeln(format!"while end - line: %s, aDiff: %s"(line, aDiff));
+    if (allZeroes) { break;}
   }
   return lineDiffs;
 }

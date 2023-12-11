@@ -1,0 +1,15 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/day10pipemaze
+day10pipemaze.so
+day10pipemaze.dylib
+day10pipemaze.dll
+day10pipemaze.a
+day10pipemaze.lib
+day10pipemaze-test-*
+*.exe
+*.o
+*.obj
+*.lst

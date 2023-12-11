@@ -1,0 +1,9 @@
+{
+	"authors": [
+		"gavin"
+	],
+	"copyright": "Copyright © 2023, gavin",
+	"description": "Find steps in giant loop.",
+	"license": "proprietary",
+	"name": "day10pipemaze"
+}
