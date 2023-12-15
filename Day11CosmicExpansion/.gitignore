@@ -1,0 +1,15 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/day11cosmicexpansion
+day11cosmicexpansion.so
+day11cosmicexpansion.dylib
+day11cosmicexpansion.dll
+day11cosmicexpansion.a
+day11cosmicexpansion.lib
+day11cosmicexpansion-test-*
+*.exe
+*.o
+*.obj
+*.lst
