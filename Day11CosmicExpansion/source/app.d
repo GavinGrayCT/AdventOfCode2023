@@ -18,6 +18,7 @@ struct Galaxy{
 
 Galaxy[] galaxys;
 
+// Part 1 answer = 10165598
 void main()
 {
   string answerTextPart1 = "Day x, Part 1:";
@@ -39,20 +40,19 @@ void main()
   }
 
   // Expand
-  long[] nonEmptyColCount;
+  bool[] emptyColFlag;
   bool[] emptyRowFlag;
-  nonEmptyColCount.length = grid[0].length;
+  emptyColFlag.length = grid[0].length;
+  foreach(ref flag; emptyColFlag) { flag = true;}
   emptyRowFlag.length = grid.length;
-  long r = 0;
-  foreach(row; grid) {
-    emptyRowFlag[r] = true;
-    foreach(c, col; row) {
-      if (col != '.') {
-        nonEmptyColCount[c] += 1;
-        emptyRowFlag[r] = false;
+  foreach(rI, row; grid) {
+    emptyRowFlag[rI] = true;
+    foreach(cI, col; row) {
+      if (col == '#') {
+        emptyColFlag[cI] = false;
+        emptyRowFlag[rI] = false;
       }
     }
-    r += 1;
   }
 
   // Debug
@@ -62,8 +62,8 @@ void main()
     }
   }
 
-  for (long i = 0; i < nonEmptyColCount.length; i++) {
-    if (nonEmptyColCount[i] == 0) {
+  for (long i = 0; i < emptyColFlag.length; i++) {
+    if (emptyColFlag[i] == true) {
       writeln(format!"Found col empty: %s"(i));
     }
   }
@@ -80,8 +80,8 @@ void main()
 
   // Expansion: Insert Columns 
   foreach(ref row; grid) {
-    for(long cI = nonEmptyColCount.length -1; cI > -1; cI--) {
-      if (nonEmptyColCount[cI] == 0) {
+    for(long cI = emptyColFlag.length -1; cI > -1; cI--) {
+      if (emptyColFlag[cI] == true) {
         row.insertInPlace(cI +1, '0');
       }
     }
