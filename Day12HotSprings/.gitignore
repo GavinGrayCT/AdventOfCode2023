@@ -1,0 +1,15 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/day12hotsprings
+day12hotsprings.so
+day12hotsprings.dylib
+day12hotsprings.dll
+day12hotsprings.a
+day12hotsprings.lib
+day12hotsprings-test-*
+*.exe
+*.o
+*.obj
+*.lst
