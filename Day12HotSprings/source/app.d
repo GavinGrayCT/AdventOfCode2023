@@ -15,21 +15,16 @@ struct InputRecord {   // ???.### 1,1,3
   long[] damList; // 1,1,3
 }
 
+
 struct FitKey {
   long groupi;
   long fromi;
 }
 
-struct Fit {
-  FitKey fitKey;
-  const InputRecord inputRecord;
-  char[] currentCondRec;
-  Fit* nextGroupFit;
-  long count;
-}
-
 long[FitKey] countsPerGroup; // group index, from record index
-                          //  Input ==> arrangements accumulative count
+                             //  Input ==> group fits
+
+long[string] countsPerCondRec;
 
 void main()
 {
@@ -38,14 +33,16 @@ void main()
   ulong answerPart1 = 0;
   ulong answerPart2 = 0;
   auto startTime = MonoTime.currTime;
-  auto pathFilename = "data/smalldata.txt";
-  char[] data = cast(char[])read(pathFilename);
+  auto pathFilename = "data/thedata.txt";
 
-  answerPart1 = calcPart1(data, records);
-  answerPart2 = calcPart2_A(data);
+  fillInputRecords(pathFilename);
+  answerPart1 = calcPart1(inputRecords);
+
+  fillInputRecords(pathFilename);
+  answerPart2 = calcPart2_B(inputRecords);
 
   // Debug
-  // writeln(format!"records: %s"(records));
+  // writeln(format!"inputRecords: %s"(inputRecords));
 
 
   auto endTime = MonoTime.currTime;
@@ -56,44 +53,169 @@ void main()
 
 }
 
-  long calcPart1(char[] data, Record[] records) {
-    writeln("Calc Part 1");
-    foreach (line; lineSplitter(data)) {
-      extractData(line);
-    }
-    long validCount = 0;
-    foreach(i, record; records) {
-      writeln(format!"For record: %s %s"(i, record.condRec));
-      char[][] arrangements = generateArrangements(record);
-      // writeln(format!"Arrangements: %s"(arrangements));
-      bool valid = false;
-      long validCountForRecord = 0;
-      foreach (arrangement; arrangements) {
-        valid = checkArrangement(record, arrangement); 
-        if (valid) {
-          validCountForRecord += 1;
-        }
-      }
-      writeln("\n======================================================================================");
-      writeln(format!"%s valid arrangement(s) for record: %s"(validCountForRecord, record.condRec));
-      writeln("======================================================================================\n");
-      validCount += validCountForRecord;
-    }
-    return validCount;
+void fillInputRecords(string pathFilename) {
+  inputRecords = [];
+  char[] data = cast(char[])read(pathFilename);
+
+  writeln(format!"inputRecords.length: %s, data: %s ..."(inputRecords.length, data[0..50]));
+  foreach (line; lineSplitter(data)) {
+    extractData(line);
   }
+}
+
+long calcPart1(InputRecord[] inputRecords) {
+  writeln("Calc Part 1");
+  long validCount = 0;
+  foreach(i, inputRecord; inputRecords) {
+    writeln(format!"For inputRecord: %s %s"(i, inputRecord.condRec));
+    char[] key = inputRecord.condRec.dup;
+    char[][] arrangements = generateArrangements(inputRecord);
+    // writeln(format!"Arrangements: %s"(arrangements));
+    bool valid = false;
+    long validCountForRecord = 0;
+    foreach (arrangement; arrangements) {
+      valid = checkArrangement(inputRecord, arrangement); 
+      if (valid) {
+        validCountForRecord += 1;
+      }
+    }
+    writeln("\n======================================================================================");
+    writeln(format!"%s valid arrangement(s) for inputRecord: %s, key: %s"(validCountForRecord, inputRecord.condRec, key));
+    writeln("======================================================================================\n");
+    countsPerCondRec[cast(string)key] = validCountForRecord;
+    validCount += validCountForRecord;
+  }
+  return validCount;
+}
 
 long calcPart2(char[] data) {
   writeln("Calc Part 2");
-  Record[] bigRecords = getBigRecords(data);
-  return calcPart1(data, bigRecords);
+  InputRecord[] bigInputRecords = getBigInputRecords(data);
+  return calcPart1(bigInputRecords);
 }
 
-long calcPart2_A(char[] data) {
-  writeln("Calc Part 2");
-  Record[] bigRecords = getBigRecords(data);
-  // long counts = getCounts(bigRecords[0]);
-  findAllFits(0, bigRecords[0].condRec, bigRecords[0].damList);
-  return 0;
+long calcPart2_A(InputRecord[] inputRecords) {
+  writeln("Calc Part 2 A");
+  // char[] data = cast(char[])"???.###????.###????.###????.###????.###";
+  // char[] data = cast(char[])".??..??...?##.?.??..??...?##.?.??..??...?##.?.??..??...?##.?.??..??...?##.";
+  // char[] data = cast(char[])".??..??...?##.";
+  // char[] data = cast(char[])"?###????????";
+  // char[] data = cast(char[])"????.######..#####.?????.######..#####.?????.######..#####.?????.######..#####.?????.######..#####.";
+  // InputRecord aRecord = InputRecord(data, [1,6,5,1,6,5,1,6,5,1,6,5,1,6,5]);
+  char[] data = cast(char[])"?###??????????###??????????###??????????###??????????###????????";
+  InputRecord aRecord = InputRecord(data, [3,2,1,3,2,1,3,2,1,3,2,1,3,2,1]);
+  // char[] data = cast(char[])"?#?#?#?#?#?#?#???#?#?#?#?#?#?#???#?#?#?#?#?#?#???#?#?#?#?#?#?#???#?#?#?#?#?#?#?";
+  // InputRecord aRecord = InputRecord(data, [1,3,1,6,1,3,1,6,1,3,1,6,1,3,1,6,1,3,1,6]);
+  writeln(format!"For inputRecord: %s, groups: %s"(data, aRecord.damList));
+  return findFits(0, 0, aRecord);
+}
+
+long calcPart2_B(InputRecord[] inputRecords) {
+  writeln("Calc Part 2 B");
+  long total = 0;
+  foreach(inputRecord; inputRecords) {
+    countsPerGroup.clear();
+    writeln(format!"For inputRecord: %s, groups: %s"(inputRecord.condRec, inputRecord.damList));
+    long count = findFits(0, 0, inputRecord);
+    writeln(format!"%s\ncount: %s, condRec: %s\n%s"("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++",
+                                       count, inputRecord.condRec,
+                                       "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"));
+    if (cast(string)inputRecord.condRec !in countsPerCondRec) {
+      throw new Exception(format!"condRec: %s is not in countsPerCondRec"(inputRecord.condRec));
+    } else if (countsPerCondRec[cast(string)inputRecord.condRec] != count) {
+      throw new Exception(format!"Differing counts for condRec: %s, %s vs %s"(inputRecord.condRec, countsPerCondRec[cast(string)inputRecord.condRec], count));
+    }
+    total += count;                                       
+  }
+  return total;
+}
+
+
+long findFits(long groupi, long starti, const InputRecord inputRecord) {
+  long endi = 0;
+  long spaceReq = 0;
+  foreach(long i ; groupi .. inputRecord.damList.length) {
+    spaceReq += inputRecord.damList[i] +1; // +1 for trailing dot
+    // writeln(format!"i: %s, group: %s, spaceReq: %s, inputRecord.condRec.length: %s"(i, inputRecord.damList[i], spaceReq, inputRecord.condRec.length));
+  }
+  endi = inputRecord.condRec.length - spaceReq +1 +1;  // remove final . and toi not in loop
+  writeln(format!"findFits in the record for group: %s from starti: %s to endi: %s"(inputRecord.damList[groupi], starti, endi));
+
+  long totalCounts = 0;
+  // foreach (fromi; starti .. endi) {  // looping through starting places for group
+  long fromi = starti;
+  while (fromi < endi) {
+    FitKey fit = FitKey(groupi, fromi);
+    if (fit !in countsPerGroup) {
+      countsPerGroup[fit] = 0;
+      if (checkFit(fit, inputRecord)) {
+        writeln(format!"Got the fit: %s for broken: %s"(fit, inputRecord.damList[fit.groupi]));
+        long nextGroupi = groupi + 1;
+        if (nextGroupi < inputRecord.damList.length) {
+          long nextFromi = fromi + inputRecord.damList[fit.groupi] + 1;
+          long broken = inputRecord.damList[nextGroupi];
+          writeln(format!"Diving. broken: %s, nextGroupi: %s, nextFromi: %s"(broken, nextGroupi, nextFromi));
+          countsPerGroup[fit] += findFits(nextGroupi, nextFromi, inputRecord);
+        } else {
+          countsPerGroup[fit] = 1;
+        }
+      } else {
+
+      } 
+    } else {
+      writeln(format!"Already have fits. fit: %s"(fit));
+    }
+    fromi += 1;
+    totalCounts += countsPerGroup[fit];
+    writeln(format!"Counts: %s, for fit: %s. totalCounts: %s"(countsPerGroup[fit], fit, totalCounts));
+  }
+  writeln(format!"Jumping out fit. group: %s, groupi: %s, startFromi: %s, totalCounts: %s"(inputRecord.damList[groupi], groupi, starti, totalCounts));
+  return totalCounts;
+}
+
+bool checkFit(FitKey fit, const InputRecord inputRecord) {
+  long fromi = fit.fromi;
+  long toi = fit.fromi + inputRecord.damList[fit.groupi];
+  long broken = inputRecord.damList[fit.groupi];
+  writeln(format!"checkFit. broken: %s, fromi: %s, toi: %s, rec len: %s"(broken, fromi, toi, inputRecord.condRec.length));
+  if (toi < inputRecord.condRec.length) {
+    if (!".?".canFind(inputRecord.condRec[toi])) {
+      return false;
+    }
+  }
+  if (fromi > 0) {
+    if (!".?".canFind(inputRecord.condRec[fromi -1])) {
+      return false;
+    }
+
+  }
+  foreach(ch; inputRecord.condRec[fromi .. toi]) {
+    if (!"#?".canFind(ch)) {
+      return false;
+    }
+  }
+  writeln(format!"Fit found. broken: %s, fromi: %s"(broken, fromi));
+  printFit(fit, inputRecord);
+  return true;
+}
+
+void printFit(FitKey fit, const InputRecord inputRecord) {
+  long fromi = fit.fromi;
+  long toi = fit.fromi + inputRecord.damList[fit.groupi];
+  long broken = inputRecord.damList[fit.groupi];
+  char[] fitChars;
+  char[] brokenChars;
+  if (fromi > 0) {
+    fitChars ~= inputRecord.condRec[fromi -1];
+  }
+  for (long i = 0; i < broken; i++) {
+    fitChars ~= inputRecord.condRec[fromi +i];
+    brokenChars ~= '#';
+  }
+  if (toi < inputRecord.condRec.length -1) {
+    fitChars ~= inputRecord.condRec[toi];
+  }
+  writeln(format!"======================================= broken: %s, brokenChars: %s, fitChars: %s, fromi: %s, condRec: %s"(broken, brokenChars, fitChars, fromi, inputRecord.condRec));
 }
 
 void findAllFits(long start, ref char[] condRec, long[] damList) {
@@ -108,13 +230,13 @@ void findAllFits(long start, ref char[] condRec, long[] damList) {
 }
 
 
-long getCounts(Record record) {
-  writeln(format!"For record: %s"(record.condRec));
+long getCounts(InputRecord inputRecord) {
+  writeln(format!"For inputRecord: %s"(inputRecord.condRec));
   bool done;
   long nextPos = 0;
   while (nextPos >= 0) {
-    nextPos = getFirstFit(nextPos, record.condRec, record.damList[0]);
-    writeln(format!"nextPos: %s, record.condRec %s, record.damList[0]: %s"(nextPos, record.condRec, record.damList[0]));
+    nextPos = getFirstFit(nextPos, inputRecord.condRec, inputRecord.damList[0]);
+    writeln(format!"nextPos: %s, inputRecord.condRec %s, inputRecord.damList[0]: %s"(nextPos, inputRecord.condRec, inputRecord.damList[0]));
   }
   return 0;
 }
@@ -157,47 +279,37 @@ long getFirstFit(long start, char[] condRec, long damQty) {
   }
 }
 
-void findFits(ref Fit fit) {
-  for (long groupi = fit.fitKey.groupi; groupi < fit.inputRecord.damList.length; groupi++) {
-    long count = checkFit(fit);
-    if (count > 0) {
-      FitKey nextFitKey = FitKey(groupi +1, fit.fitKey.fromi + fit.inputRecord.damList[groupi]);
-      fit.nextGroupFit = new Fit()
-    }
-  }
-}
-
 void extractData(char[] line) {
   writeln(format!"Line is: %s"(line));
-  Record record;
+  InputRecord inputRecord;
   char[][] temp = line.split(' ');
-  record.condRec = temp[0];
-  record.damList = (cast(char[])temp[1]).split(',').map!(d => to!long(d)).array;
-  records ~= record;
+  inputRecord.condRec = temp[0];
+  inputRecord.damList = (cast(char[])temp[1]).split(',').map!(d => to!long(d)).array;
+  inputRecords ~= inputRecord;
 }
 
-Record[] getBigRecords(char[] data) {
+InputRecord[] getBigInputRecords(char[] data) {
   writeln("getBigRecords");
   foreach (line; lineSplitter(data)) {
     extractData(line);
   }
-  Record[] bigRecords;
-  foreach(r, record; records) {
-    writeln(format!"For record: %s %s"(r, record.condRec));
-    Record bigRecord;
+  InputRecord[] bigInputRecords;
+  foreach(r, inputRecord; inputRecords) {
+    writeln(format!"For inputRecord: %s %s"(r, inputRecord.condRec));
+    InputRecord bigInputRecord;
     for (long i = 0; i < 5; i++) {
-      bigRecord.condRec ~= record.condRec ~ '?';
-      bigRecord.damList ~= record.damList;
+      bigInputRecord.condRec ~= inputRecord.condRec ~ '?';
+      bigInputRecord.damList ~= inputRecord.damList;
     }
-    bigRecords ~= bigRecord;
+    bigInputRecords ~= bigInputRecord;
   }
-  return bigRecords;
+  return bigInputRecords;
 }
 
 
-char[][] generateArrangements(Record record) {
+char[][] generateArrangements(InputRecord inputRecord) {
   char[][] arrangements;
-  char[] anArrangement = record.condRec;
+  char[] anArrangement = inputRecord.condRec;
   while (true) {
     long i = anArrangement.indexOf('?');
     if (i >= 0) {
@@ -206,7 +318,7 @@ char[][] generateArrangements(Record record) {
       break; // all ? now f.
     }
   }
-  // writeln(format!"For record: %s, anArrangement: %s"(record.condRec, anArrangement));
+  // writeln(format!"For inputRecord: %s, anArrangement: %s"(inputRecord.condRec, anArrangement));
 
   while (true) {
     // writeln(format!"About to add anArrangement: %s"(anArrangement));
@@ -241,11 +353,11 @@ char[][] generateArrangements(Record record) {
   return arrangements;
 }
 
-bool checkArrangement(Record record, char[] arrangement) {
-  // writefln(format!"Checking arrangement: %s against %s"(arrangement, record.damList));
+bool checkArrangement(InputRecord inputRecord, char[] arrangement) {
+  // writefln(format!"Checking arrangement: %s against %s"(arrangement, inputRecord.damList));
   long di, dli, ai = 0;
-  if (record.damList.length > 0) {
-    di = record.damList[dli++];
+  if (inputRecord.damList.length > 0) {
+    di = inputRecord.damList[dli++];
   }
   string state = "Expect Either";
   while (true) {
@@ -268,11 +380,11 @@ bool checkArrangement(Record record, char[] arrangement) {
         if (di > 0) {
           di -= 1;
           if (di == 0) {
-            if (dli == record.damList.length) {
+            if (dli == inputRecord.damList.length) {
               di = 0;
               state = "Expect only .s";
             } else {
-              di = record.damList[dli++];
+              di = inputRecord.damList[dli++];
               state = "Expect .";
             }
           } else {
@@ -289,11 +401,11 @@ bool checkArrangement(Record record, char[] arrangement) {
             di -= 1; 
             state = "Expect #"; // no change
           } else if (di == 1) {
-            if (dli == record.damList.length) {
+            if (dli == inputRecord.damList.length) {
               di = 0;
               state = "Expect only .s";
             } else {
-              di = record.damList[dli++];
+              di = inputRecord.damList[dli++];
               state = "Expect .";
             }
           } else {
@@ -328,7 +440,7 @@ bool checkArrangement(Record record, char[] arrangement) {
     // writefln(format!"State: |%s| , dli: %s, di: %s, ai: %s"(state, dli, di, ai));
     ai += 1;
     if (ai >= arrangement.length) {
-      if (dli >= record.damList.length) {
+      if (dli >= inputRecord.damList.length) {
         if (state == "Expect only .s") {
           writeln("\n======================================================================================");
           writefln(format!"Valid arrangement: %s"(arrangement));
