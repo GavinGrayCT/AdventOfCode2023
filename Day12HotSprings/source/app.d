@@ -57,15 +57,15 @@ void main()
 
 }
 
-void fillInputRecords(string pathFilename) {
-  inputRecords = [];
-  char[] data = cast(char[])read(pathFilename);
+// void fillInputRecords(string pathFilename) {
+//   inputRecords = [];
+//   char[] data = cast(char[])read(pathFilename);
 
-  writeln(format!"inputRecords.length: %s, data: %s ..."(inputRecords.length, data[0..50]));
-  foreach (line; lineSplitter(data)) {
-    extractData(line);
-  }
-}
+//   writeln(format!"inputRecords.length: %s, data: %s ..."(inputRecords.length, data[0..50]));
+//   foreach (line; lineSplitter(data)) {
+//     extractData(line);
+//   }
+// }
 
 void fillBigInputRecords(string pathFilename) {
   inputRecords = [];
@@ -75,52 +75,52 @@ void fillBigInputRecords(string pathFilename) {
   inputRecords = getBigInputRecords(data);
 }
 
-long calcPart1(InputRecord[] inputRecords) {
-  writeln("Calc Part 1");
-  long validCount = 0;
-  foreach(i, inputRecord; inputRecords) {
-    writeln(format!"For inputRecord: %s %s"(i, inputRecord.condRec));
-    char[] key = inputRecord.condRec.dup;
-    char[][] arrangements = generateArrangements(inputRecord);
-    // writeln(format!"Arrangements: %s"(arrangements));
-    bool valid = false;
-    long validCountForRecord = 0;
-    foreach (arrangement; arrangements) {
-      valid = checkArrangement(inputRecord, arrangement); 
-      if (valid) {
-        validCountForRecord += 1;
-      }
-    }
-    writeln("\n======================================================================================");
-    writeln(format!"%s valid arrangement(s) for inputRecord: %s, key: %s"(validCountForRecord, inputRecord.condRec, key));
-    writeln("======================================================================================\n");
-    countsPerCondRec[cast(string)key] = validCountForRecord;
-    validCount += validCountForRecord;
-  }
-  return validCount;
-}
+// long calcPart1(InputRecord[] inputRecords) {
+//   writeln("Calc Part 1");
+//   long validCount = 0;
+//   foreach(i, inputRecord; inputRecords) {
+//     writeln(format!"For inputRecord: %s %s"(i, inputRecord.condRec));
+//     char[] key = inputRecord.condRec.dup;
+//     char[][] arrangements = generateArrangements(inputRecord);
+//     // writeln(format!"Arrangements: %s"(arrangements));
+//     bool valid = false;
+//     long validCountForRecord = 0;
+//     foreach (arrangement; arrangements) {
+//       valid = checkArrangement(inputRecord, arrangement); 
+//       if (valid) {
+//         validCountForRecord += 1;
+//       }
+//     }
+//     writeln("\n======================================================================================");
+//     writeln(format!"%s valid arrangement(s) for inputRecord: %s, key: %s"(validCountForRecord, inputRecord.condRec, key));
+//     writeln("======================================================================================\n");
+//     countsPerCondRec[cast(string)key] = validCountForRecord;
+//     validCount += validCountForRecord;
+//   }
+//   return validCount;
+// }
 
-long calcPart2(char[] data) {
-  writeln("Calc Part 2");
-  InputRecord[] bigInputRecords = getBigInputRecords(data);
-  return calcPart1(bigInputRecords);
-}
+// long calcPart2(char[] data) {
+//   writeln("Calc Part 2");
+//   InputRecord[] bigInputRecords = getBigInputRecords(data);
+//   return calcPart1(bigInputRecords);
+// }
 
-long calcPart2_A(InputRecord[] inputRecords) {
-  // writeln("Calc Part 2 A");
-  // char[] data = cast(char[])"???.###????.###????.###????.###????.###";
-  // char[] data = cast(char[])".??..??...?##.?.??..??...?##.?.??..??...?##.?.??..??...?##.?.??..??...?##.";
-  // char[] data = cast(char[])".??..??...?##.";
-  // char[] data = cast(char[])"?###????????";
-  // char[] data = cast(char[])"????.######..#####.?????.######..#####.?????.######..#####.?????.######..#####.?????.######..#####.";
-  // InputRecord aRecord = InputRecord(data, [1,6,5,1,6,5,1,6,5,1,6,5,1,6,5]);
-  char[] data = cast(char[])"?###??????????###??????????###??????????###??????????###????????";
-  InputRecord aRecord = InputRecord(data, [3,2,1,3,2,1,3,2,1,3,2,1,3,2,1]);
-  // char[] data = cast(char[])"?#?#?#?#?#?#?#???#?#?#?#?#?#?#???#?#?#?#?#?#?#???#?#?#?#?#?#?#???#?#?#?#?#?#?#?";
-  // InputRecord aRecord = InputRecord(data, [1,3,1,6,1,3,1,6,1,3,1,6,1,3,1,6,1,3,1,6]);
-  writeln(format!"For inputRecord: %s, groups: %s"(data, aRecord.damList));
-  return findFits(0, 0, aRecord);
-}
+// long calcPart2_A(InputRecord[] inputRecords) {
+//   // writeln("Calc Part 2 A");
+//   // char[] data = cast(char[])"???.###????.###????.###????.###????.###";
+//   // char[] data = cast(char[])".??..??...?##.?.??..??...?##.?.??..??...?##.?.??..??...?##.?.??..??...?##.";
+//   // char[] data = cast(char[])".??..??...?##.";
+//   // char[] data = cast(char[])"?###????????";
+//   // char[] data = cast(char[])"????.######..#####.?????.######..#####.?????.######..#####.?????.######..#####.?????.######..#####.";
+//   // InputRecord aRecord = InputRecord(data, [1,6,5,1,6,5,1,6,5,1,6,5,1,6,5]);
+//   char[] data = cast(char[])"?###??????????###??????????###??????????###??????????###????????";
+//   InputRecord aRecord = InputRecord(data, [3,2,1,3,2,1,3,2,1,3,2,1,3,2,1]);
+//   // char[] data = cast(char[])"?#?#?#?#?#?#?#???#?#?#?#?#?#?#???#?#?#?#?#?#?#???#?#?#?#?#?#?#???#?#?#?#?#?#?#?";
+//   // InputRecord aRecord = InputRecord(data, [1,3,1,6,1,3,1,6,1,3,1,6,1,3,1,6,1,3,1,6]);
+//   writeln(format!"For inputRecord: %s, groups: %s"(data, aRecord.damList));
+//   return findFits(0, 0, aRecord);
+// }
 
 long calcPart2_B(InputRecord[] inputRecords) {
   writeln("Calc Part 2 B");
@@ -277,66 +277,66 @@ void printFit(FitKey fit, const InputRecord inputRecord) {
   writeln(format!"======================================= broken: %s, brokenChars: %s, fitChars: %s, fromi: %s, condRec: %s"(broken, brokenChars, fitChars, fromi, inputRecord.condRec));
 }
 
-void findAllFits(long start, ref char[] condRec, long[] damList) {
-  while (start >= 0) {
-    start = getFirstFit(start, condRec, damList[0]);
-    if (damList.length > 0) {
-      findAllFits(start, condRec, damList[0 .. $]);
-    } else {
-      break;
-    }
-  }
-}
+// void findAllFits(long start, ref char[] condRec, long[] damList) {
+//   while (start >= 0) {
+//     start = getFirstFit(start, condRec, damList[0]);
+//     if (damList.length > 0) {
+//       findAllFits(start, condRec, damList[0 .. $]);
+//     } else {
+//       break;
+//     }
+//   }
+// }
 
 
-long getCounts(InputRecord inputRecord) {
-  writeln(format!"For inputRecord: %s"(inputRecord.condRec));
-  bool done;
-  long nextPos = 0;
-  while (nextPos >= 0) {
-    nextPos = getFirstFit(nextPos, inputRecord.condRec, inputRecord.damList[0]);
-    writeln(format!"nextPos: %s, inputRecord.condRec %s, inputRecord.damList[0]: %s"(nextPos, inputRecord.condRec, inputRecord.damList[0]));
-  }
-  return 0;
-}
+// long getCounts(InputRecord inputRecord) {
+//   writeln(format!"For inputRecord: %s"(inputRecord.condRec));
+//   bool done;
+//   long nextPos = 0;
+//   while (nextPos >= 0) {
+//     nextPos = getFirstFit(nextPos, inputRecord.condRec, inputRecord.damList[0]);
+//     writeln(format!"nextPos: %s, inputRecord.condRec %s, inputRecord.damList[0]: %s"(nextPos, inputRecord.condRec, inputRecord.damList[0]));
+//   }
+//   return 0;
+// }
 
-long getFirstFit(long start, char[] condRec, long damQty) {
-  if (start >= condRec.length) {
-    return -1;
-  }
-  long i = start;
-  long d = damQty;
-  while (true) {
-    writeln(format!"start: %s, i: %s, d: %s, char: %s, damQty: %s"(start, i, d, condRec[i], damQty));
-    if ( condRec[i] != '.') {
-      if (condRec[i] == '?') {
-        condRec[i] = 'f';
-      }
-      d -= 1;
-      if (d <= 0) {
-        if (i < condRec.length -1) {
-          if ( condRec[i+1] == '.') { 
-            return i + d +2;
-          } else if ( condRec[i+1] == '?') { 
-            condRec[i+1] = 'g';
-            writeln(format!"Found fit: %s"(condRec[1-damQty .. i]));
-            return i + d +2;
-          }
-          d = damQty;
-        } else {
-          return -1;
-        }
-      }
-    } else {
-      d = damQty;
-    }
+// long getFirstFit(long start, char[] condRec, long damQty) {
+//   if (start >= condRec.length) {
+//     return -1;
+//   }
+//   long i = start;
+//   long d = damQty;
+//   while (true) {
+//     writeln(format!"start: %s, i: %s, d: %s, char: %s, damQty: %s"(start, i, d, condRec[i], damQty));
+//     if ( condRec[i] != '.') {
+//       if (condRec[i] == '?') {
+//         condRec[i] = 'f';
+//       }
+//       d -= 1;
+//       if (d <= 0) {
+//         if (i < condRec.length -1) {
+//           if ( condRec[i+1] == '.') { 
+//             return i + d +2;
+//           } else if ( condRec[i+1] == '?') { 
+//             condRec[i+1] = 'g';
+//             writeln(format!"Found fit: %s"(condRec[1-damQty .. i]));
+//             return i + d +2;
+//           }
+//           d = damQty;
+//         } else {
+//           return -1;
+//         }
+//       }
+//     } else {
+//       d = damQty;
+//     }
 
-    i++;
-    if (i >= condRec.length) {
-      return -1;
-    }
-  }
-}
+//     i++;
+//     if (i >= condRec.length) {
+//       return -1;
+//     }
+//   }
+// }
 
 void extractData(char[] line) {
   // writeln(format!"Line is: %s"(line));
@@ -370,151 +370,151 @@ InputRecord[] getBigInputRecords(char[] data) {
 }
 
 
-char[][] generateArrangements(InputRecord inputRecord) {
-  char[][] arrangements;
-  char[] anArrangement = inputRecord.condRec;
-  while (true) {
-    long i = anArrangement.indexOf('?');
-    if (i >= 0) {
-      anArrangement[i] = 'f';
-    } else {
-      break; // all ? now f.
-    }
-  }
-  // writeln(format!"For inputRecord: %s, anArrangement: %s"(inputRecord.condRec, anArrangement));
+// char[][] generateArrangements(InputRecord inputRecord) {
+//   char[][] arrangements;
+//   char[] anArrangement = inputRecord.condRec;
+//   while (true) {
+//     long i = anArrangement.indexOf('?');
+//     if (i >= 0) {
+//       anArrangement[i] = 'f';
+//     } else {
+//       break; // all ? now f.
+//     }
+//   }
+//   // writeln(format!"For inputRecord: %s, anArrangement: %s"(inputRecord.condRec, anArrangement));
 
-  while (true) {
-    // writeln(format!"About to add anArrangement: %s"(anArrangement));
-    arrangements ~= anArrangement.dup;
-    // writeln(format!"W1 Arrangements: %s"(arrangements));
-    long i =  0;
-    while (true) {
-      if (anArrangement[i] == 'f') {
-        anArrangement[i] = 't';
-        break;
-      } else if (anArrangement[i] == 't') {
-        anArrangement[i] = 'f';
-      }
-      i += 1;
-      if (i >= anArrangement.length) {
-        break;
-      }
-    }
-    if (i >= anArrangement.length) {
-      break;
-    }
-  }
-  foreach(ref arrangement; arrangements) {
-    for (long i = 0; i < arrangement.length; i++) {
-      if (arrangement[i] == 't') {
-        arrangement[i] = '.';
-      } else if (arrangement[i] == 'f') {
-        arrangement[i] = '#';
-      }
-    }
-  }
-  return arrangements;
-}
+//   while (true) {
+//     // writeln(format!"About to add anArrangement: %s"(anArrangement));
+//     arrangements ~= anArrangement.dup;
+//     // writeln(format!"W1 Arrangements: %s"(arrangements));
+//     long i =  0;
+//     while (true) {
+//       if (anArrangement[i] == 'f') {
+//         anArrangement[i] = 't';
+//         break;
+//       } else if (anArrangement[i] == 't') {
+//         anArrangement[i] = 'f';
+//       }
+//       i += 1;
+//       if (i >= anArrangement.length) {
+//         break;
+//       }
+//     }
+//     if (i >= anArrangement.length) {
+//       break;
+//     }
+//   }
+//   foreach(ref arrangement; arrangements) {
+//     for (long i = 0; i < arrangement.length; i++) {
+//       if (arrangement[i] == 't') {
+//         arrangement[i] = '.';
+//       } else if (arrangement[i] == 'f') {
+//         arrangement[i] = '#';
+//       }
+//     }
+//   }
+//   return arrangements;
+// }
 
-bool checkArrangement(InputRecord inputRecord, char[] arrangement) {
-  // writefln(format!"Checking arrangement: %s against %s"(arrangement, inputRecord.damList));
-  long di, dli, ai = 0;
-  if (inputRecord.damList.length > 0) {
-    di = inputRecord.damList[dli++];
-  }
-  string state = "Expect Either";
-  while (true) {
-    // writefln(format!"Char: %s, State: |%s|  dli: %s, di: %s, ai: %s"(arrangement[ai], state, dli, di, ai));
-    switch (state) {
-      case "Expect Either": {
-        if (arrangement[ai] == '.') {
-          goto case "Got .";
-        } else if (arrangement[ai] == '#') {
-          goto case "Got 1st #";
-        } else {
-          throw new Exception(format!"Illegal character in input");
-        }
-      }
-      case "Got .": {
-        state = "Expect Either";
-        break;
-      }
-      case "Got 1st #": {
-        if (di > 0) {
-          di -= 1;
-          if (di == 0) {
-            if (dli == inputRecord.damList.length) {
-              di = 0;
-              state = "Expect only .s";
-            } else {
-              di = inputRecord.damList[dli++];
-              state = "Expect .";
-            }
-          } else {
-            state = "Expect #";
-          }
-        } else {
-          return false;
-        }
-        break;
-      }
-      case "Expect #": {
-        if (arrangement[ai] == '#') {
-          if (di > 1) {
-            di -= 1; 
-            state = "Expect #"; // no change
-          } else if (di == 1) {
-            if (dli == inputRecord.damList.length) {
-              di = 0;
-              state = "Expect only .s";
-            } else {
-              di = inputRecord.damList[dli++];
-              state = "Expect .";
-            }
-          } else {
-            throw new Exception(format!"Unexpected else condition");
-          }
-        } else {
-          return false;
-        }
-        break;
-      }
-      case "Expect .": {
-        if (arrangement[ai] == '.') {
-          state = "Expect Either";
-        } else {
-          return false;
-        }
-        break;
-      }
-      case "Expect only .s": {
-        if (arrangement[ai] == '.') {
-          state = "Expect only .s"; // no change
-        } else {
-          return false;
-        }
-        break;
-      }
-      default: {
-        throw new Exception(format!"Illegal state");
-      }
+// bool checkArrangement(InputRecord inputRecord, char[] arrangement) {
+//   // writefln(format!"Checking arrangement: %s against %s"(arrangement, inputRecord.damList));
+//   long di, dli, ai = 0;
+//   if (inputRecord.damList.length > 0) {
+//     di = inputRecord.damList[dli++];
+//   }
+//   string state = "Expect Either";
+//   while (true) {
+//     // writefln(format!"Char: %s, State: |%s|  dli: %s, di: %s, ai: %s"(arrangement[ai], state, dli, di, ai));
+//     switch (state) {
+//       case "Expect Either": {
+//         if (arrangement[ai] == '.') {
+//           goto case "Got .";
+//         } else if (arrangement[ai] == '#') {
+//           goto case "Got 1st #";
+//         } else {
+//           throw new Exception(format!"Illegal character in input");
+//         }
+//       }
+//       case "Got .": {
+//         state = "Expect Either";
+//         break;
+//       }
+//       case "Got 1st #": {
+//         if (di > 0) {
+//           di -= 1;
+//           if (di == 0) {
+//             if (dli == inputRecord.damList.length) {
+//               di = 0;
+//               state = "Expect only .s";
+//             } else {
+//               di = inputRecord.damList[dli++];
+//               state = "Expect .";
+//             }
+//           } else {
+//             state = "Expect #";
+//           }
+//         } else {
+//           return false;
+//         }
+//         break;
+//       }
+//       case "Expect #": {
+//         if (arrangement[ai] == '#') {
+//           if (di > 1) {
+//             di -= 1; 
+//             state = "Expect #"; // no change
+//           } else if (di == 1) {
+//             if (dli == inputRecord.damList.length) {
+//               di = 0;
+//               state = "Expect only .s";
+//             } else {
+//               di = inputRecord.damList[dli++];
+//               state = "Expect .";
+//             }
+//           } else {
+//             throw new Exception(format!"Unexpected else condition");
+//           }
+//         } else {
+//           return false;
+//         }
+//         break;
+//       }
+//       case "Expect .": {
+//         if (arrangement[ai] == '.') {
+//           state = "Expect Either";
+//         } else {
+//           return false;
+//         }
+//         break;
+//       }
+//       case "Expect only .s": {
+//         if (arrangement[ai] == '.') {
+//           state = "Expect only .s"; // no change
+//         } else {
+//           return false;
+//         }
+//         break;
+//       }
+//       default: {
+//         throw new Exception(format!"Illegal state");
+//       }
 
-    }
-    // writefln(format!"State: |%s| , dli: %s, di: %s, ai: %s"(state, dli, di, ai));
-    ai += 1;
-    if (ai >= arrangement.length) {
-      if (dli >= inputRecord.damList.length) {
-        if (state == "Expect only .s") {
-          writeln("\n======================================================================================");
-          writefln(format!"Valid arrangement: %s"(arrangement));
-          writeln("======================================================================================\n");
-          return true;
-        }
-        return false;
-      }
-      return false;
-    }
-  }
-  writeln("Dropping out of loop");
-  return false;
-}
+//     }
+//     // writefln(format!"State: |%s| , dli: %s, di: %s, ai: %s"(state, dli, di, ai));
+//     ai += 1;
+//     if (ai >= arrangement.length) {
+//       if (dli >= inputRecord.damList.length) {
+//         if (state == "Expect only .s") {
+//           writeln("\n======================================================================================");
+//           writefln(format!"Valid arrangement: %s"(arrangement));
+//           writeln("======================================================================================\n");
+//           return true;
+//         }
+//         return false;
+//       }
+//       return false;
+//     }
+//   }
+//   writeln("Dropping out of loop");
+//   return false;
+// }
