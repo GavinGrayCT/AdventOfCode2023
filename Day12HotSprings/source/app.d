@@ -35,13 +35,14 @@ void main()
   string answerTextPart2 = "Day x, Part 2:";
   ulong answerPart1 = 0;
   ulong answerPart2 = 0;
-  auto startTime = MonoTime.currTime;
+  // auto startTime = MonoTime.currTime;
   auto pathFilename = "data/thedata.txt";
 
   // fillInputRecords(pathFilename);
   // answerPart1 = calcPart1(inputRecords);
 
   fillBigInputRecords(pathFilename);
+  auto startTime = MonoTime.currTime;
   answerPart2 = calcPart2_B(inputRecords);
 
   // Debug
@@ -70,7 +71,7 @@ void fillBigInputRecords(string pathFilename) {
   inputRecords = [];
   char[] data = cast(char[])read(pathFilename);
 
-  writeln(format!"inputRecords.length: %s, data: %s ..."(inputRecords.length, data[0..50]));
+  // writeln(format!"inputRecords.length: %s, data: %s ..."(inputRecords.length, data[0..50]));
   inputRecords = getBigInputRecords(data);
 }
 
@@ -106,7 +107,7 @@ long calcPart2(char[] data) {
 }
 
 long calcPart2_A(InputRecord[] inputRecords) {
-  writeln("Calc Part 2 A");
+  // writeln("Calc Part 2 A");
   // char[] data = cast(char[])"???.###????.###????.###????.###????.###";
   // char[] data = cast(char[])".??..??...?##.?.??..??...?##.?.??..??...?##.?.??..??...?##.?.??..??...?##.";
   // char[] data = cast(char[])".??..??...?##.";
@@ -127,9 +128,9 @@ long calcPart2_B(InputRecord[] inputRecords) {
   foreach(n, inputRecord; inputRecords) {
     // writelnOn = inputRecord.condRec == focusCondRec? true : false;
     countsPerGroup.clear();
-    writeln(format!"%s For inputRecord: %s, groups: %s"(n, inputRecord.condRec, inputRecord.damList));
+    // writeln(format!"%s For inputRecord: %s, groups: %s"(n, inputRecord.condRec, inputRecord.damList));
     long count = findFits(0, 0, inputRecord);
-    writeln(format!"%s arrangements: %s"(n, count));
+    // writeln(format!"%s arrangements: %s"(n, count));
     if (writelnOn)
       writeln(format!"%s\ncount: %s, condRec: %s\n%s"("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++",
                                         count, inputRecord.condRec,
@@ -338,7 +339,7 @@ long getFirstFit(long start, char[] condRec, long damQty) {
 }
 
 void extractData(char[] line) {
-  writeln(format!"Line is: %s"(line));
+  // writeln(format!"Line is: %s"(line));
   InputRecord inputRecord;
   char[][] temp = line.split(' ');
   inputRecord.condRec = temp[0];
@@ -347,16 +348,20 @@ void extractData(char[] line) {
 }
 
 InputRecord[] getBigInputRecords(char[] data) {
-  writeln("getBigRecords");
+  // writeln("getBigRecords");
   foreach (line; lineSplitter(data)) {
     extractData(line);
   }
   InputRecord[] bigInputRecords;
   foreach(r, inputRecord; inputRecords) {
-    writeln(format!"For inputRecord: %s %s"(r, inputRecord.condRec));
+    // writeln(format!"For inputRecord: %s %s"(r, inputRecord.condRec));
     InputRecord bigInputRecord;
     for (long i = 0; i < 5; i++) {
-      bigInputRecord.condRec ~= inputRecord.condRec ~ '?';
+      if (i < 4) {
+        bigInputRecord.condRec ~= inputRecord.condRec ~ '?';
+      } else {
+        bigInputRecord.condRec ~= inputRecord.condRec;
+      }
       bigInputRecord.damList ~= inputRecord.damList;
     }
     bigInputRecords ~= bigInputRecord;
