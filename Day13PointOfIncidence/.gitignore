@@ -1,0 +1,16 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/day13pointofincidence
+day13pointofincidence.so
+day13pointofincidence.dylib
+day13pointofincidence.dll
+day13pointofincidence.a
+day13pointofincidence.lib
+day13pointofincidence-test-*
+*.exe
+*.pdb
+*.o
+*.obj
+*.lst
